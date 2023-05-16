@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clap Market</title>
+
+    <link rel="stylesheet" href="css/market.css">
+    <link rel="stylesheet" href="css/block-test.css">
+
+</head>
+
+<body>
+
+    <nav class="navbar"></nav>
+    <button class="product-btn" onclick="addnewproductClick()">上架</button>
+    <!-- 以下為商品 -->
+    <div id="cartContainer"></div>
+
+    <footer></footer>
+
+    <script src="js/nav.js"></script>
+    <!-- dynamic create navbar -->
+    <script src="js/footer.js"></script>
+    <!-- dynamic create footer -->
+</body>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js"; import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-analytics.js"; const firebaseConfig = { apiKey: "AIzaSyAilIs8nlqbsnXLnIpK3B4zU1ojk7nQU94",
+    authDomain: "database2022-311c8.firebaseapp.com", projectId: "database2022-311c8", storageBucket: "database2022-311c8.appspot.com", messagingSenderId: "15999843002", appId: "1:15999843002:web:31a94923044c50113ee083", measurementId: "G-8HL90VJ2K7"
+    }; const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app);
+</script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script>
+    firebase.initializeApp({
+        databaseURL: "https://database2022-311c8-default-rtdb.firebaseio.com/"
+    });
+    const db = firebase.database();
+    db.ref('TABLE/GOODS').once('value', function(snapshot) {
+        let cartContainer = document.getElementById('cartContainer');
+        let data = snapshot.val();
+        let id = data['ID'];
+        let name = data['NAME'];
+        let num = data['NUM'];
+        let price = data['PRICE'];
+        let sid = data['SELLER_ID'];
+        let type = data['TYPE'];
+        let getUrlString = location.href;
+        let url = new URL(getUrlString);
+        db.ref('TABLE/USER/NAME').once('value', function(snapshot2) {
+            for (let i = 0; i < sid.length; i++) {
+                if (num[i] > 0) {
+                    let data2 = snapshot2.val();
+                    let Sname = data2[sid[i]];
+                    keyword = url.searchParams.get('search')
+                    if (keyword) {
+                        if (name[i].includes(keyword) || type[i].includes(keyword)) {
+                            if (Sname === url.searchParams.get('name')) {
+                                cartContainer.innerHTML += `
+                        <div class="product-box">
+                            <div class="seller-name">
+                                <h3>賣家：${Sname}</h3>
+                            </div>
+                            <div class="product-body">
+                                <div class="half">
+                                    <div class="featured-text">
+                                        <h2>商品名稱：${name[i]}</h2>
+                                        <p class="price">價格：<b>${price[i]}</b></p>
+                                    </div>
+                                    <div class="amount">
+                                        <p>數量：<b id="n${i}">${num[i]}</b></p>
+                                    </div>
+                                </div>
+                                <div class="half">
+                                    <div class="image">
+                                        <img src="https://m.media-amazon.com/images/I/91jb08nas1L._AC_SL1500_.jpg" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="action">
+                                    <button class="submitBtn" onclick="cancelClick(${i});"><b>下架此商品</b></button>
+                                </div>
+                            </div>
+                        </div>`
+                            } else {
+                                cartContainer.innerHTML += `
+                        <div class="product-box">
+                            <div class="seller-name">
+                                <h3>賣家：${Sname}</h3>
+                            </div>
+                            <div class="product-body">
+                                <div class="half">
+                                    <div class="featured-text">
+                                        <h2>商品名稱：${name[i]}</h2>
+                                        <p class="price">價格：<b>${price[i]}</b></p>
+                                    </div>
+                                    <div class="amount">
+                                        <p>數量：<b id="n${i}">${num[i]}</b></p>
+                                    </div>
+                                </div>
+                                <div class="half">
+                                    <div class="image">
+                                        <img src="https://m.media-amazon.com/images/I/91jb08nas1L._AC_SL1500_.jpg" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="action">
+                                    <button class="submitBtn" onclick="buyClick(${i});"><b>購買</b></button>
+                                </div>
+                            </div>
+                        </div>`
+
+                            }
+
+                        }
+                    } else {
+                        if (Sname === url.searchParams.get('name')) {
+                            cartContainer.innerHTML += `
+                        <div class="product-box">
+                            <div class="seller-name">
+                                <h3>賣家：${Sname}</h3>
+                            </div>
+                            <div class="product-body">
+                                <div class="half">
+                                    <div class="featured-text">
+                                        <h2>商品名稱：${name[i]}</h2>
+                                        <p class="price">價格：<b>${price[i]}</b></p>
+                                    </div>
+                                    <div class="amount">
+                                        <p>數量：<b id="n${i}">${num[i]}</b></p>
+                                    </div>
+                                </div>
+                                <div class="half">
+                                    <div class="image">
+                                        <img src="https://m.media-amazon.com/images/I/91jb08nas1L._AC_SL1500_.jpg" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="action">
+                                    <button class="submitBtn" onclick="cancelClick(${i});"><b>下架此商品</b></button>
+                                </div>
+                            </div>
+                        </div>`
+                        } else {
+                            cartContainer.innerHTML += `
+                        <div class="product-box">
+                            <div class="seller-name">
+                                <h3>賣家：${Sname}</h3>
+                            </div>
+                            <div class="product-body">
+                                <div class="half">
+                                    <div class="featured-text">
+                                        <h2>商品名稱：${name[i]}</h2>
+                                        <p class="price">價格：<b>${price[i]}</b></p>
+                                    </div>
+                                    <div class="amount">
+                                        <p>數量：<b id="n${i}">${num[i]}</b></p>
+                                    </div>
+                                </div>
+                                <div class="half">
+                                    <div class="image">
+                                        <img src="https://m.media-amazon.com/images/I/91jb08nas1L._AC_SL1500_.jpg" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-footer">
+                                <div class="action">
+                                    <button class="submitBtn" onclick="buyClick(${i});"><b>購買</b></button>
+                                </div>
+                            </div>
+                        </div>`
+
+                        }
+                    }
+                }
+            }
+
+        });
+    });
+
+    function buyClick(gid) {
+        let getUrlString = location.href;
+        let url = new URL(getUrlString);
+        if (url.searchParams.get('login') === 'true') {
+            db.ref('TABLE/CART').once('value', function(snapshot) {
+                let data = snapshot.val();
+                id = parseInt(url.searchParams.get('id'));
+                if (data[id]['GID'].indexOf(gid) === -1) {
+                    data[id]['GID'].push(gid);
+                    data[id]['NUM'].push(1);
+                } else {
+                    data[id]['NUM'][data[id]['GID'].indexOf(gid)] += 1;
+                }
+                db.ref('TABLE/CART').update(data);
+            });
+            alert("已加入購物車!");
+            // db.ref('TABLE/GOODS').once('value', function(snapshot) {
+            //     let data = snapshot.val();
+            //     data['NUM'][gid - 1] -= 1;
+            //     db.ref('TABLE/GOODS').update(data);
+
+            // });
+
+        } else {
+            location.href = 'login.html';
+        }
+
+    }
+
+    function cancelClick(gid) {
+        db.ref('TABLE/GOODS').once('value', function(snapshot) {
+            let data = snapshot.val();
+            data['NUM'][gid] = 0;
+            db.ref('TABLE/GOODS').update(data);
+            location.reload();
+        });
+
+    }
+
+    function addnewproductClick() {
+        if (url.searchParams.get('login') === 'true') {
+            location.href = `addnewproduct1.html?login=true&id=${url.searchParams.get('id')}&name=${url.searchParams.get('name')}`;
+        } else {
+            location.href = 'login.html';
+        }
+    }
+</script>
+
+</html>

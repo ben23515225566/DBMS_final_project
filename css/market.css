@@ -1,0 +1,22 @@
+@import 'nav.css';
+@import 'footer.css';
+
+.product-btn{
+    cursor: pointer;
+    border: 1px solid #000;
+    padding: 5px 30px;
+    border-radius: 200px;
+    color: #fff;
+    background: #000;
+    font-family: "Open Sans", sans-serif;
+    font-size: 16px;
+    transition: 200ms;
+    margin-top: 10px;
+    margin-left: 165px;
+    margin-bottom: 20px;
+}
+
+.product-btn:hover{
+    background: #fff;
+    color: #000;
+}

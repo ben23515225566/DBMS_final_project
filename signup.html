@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+
+    <link rel="stylesheet" href="css/signup.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="src/dark-logo.png" class="logo" alt="">
+        <div>
+            <input type="text" autocomplete="off" id="name" placeholder="name">
+            <input type="email" autocomplete="off" name="email" id="email" placeholder="email">
+            <input type="password" autocomplete="off" name="password" id="password" placeholder="password">
+            <button class="submit-btn" id="loginBtn">create account</button>
+        </div>
+        <a href="login.html" class="link">already have an account? Login here</a>
+    </div>
+
+</body>
+<script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-database.js"></script>
+<script>
+    var firebaseConfig = {
+        apiKey: "AIzaSyAilIs8nlqbsnXLnIpK3B4zU1ojk7nQU94",
+        authDomain: "database2022-311c8.firebaseapp.com",
+        databaseURL: "https://database2022-311c8-default-rtdb.firebaseio.com",
+        projectId: "database2022-311c8",
+        storageBucket: "database2022-311c8.appspot.com",
+        messagingSenderId: "15999843002",
+        appId: "1:15999843002:web:31a94923044c50113ee083"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    loginBtn.addEventListener('click', (e) => {
+        db.ref('TABLE/USER/').once('value', function(snapshot) {
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            let data = snapshot.val();
+            let IDArray = data['ID'];
+            let MAILArray = data['MAIL'];
+            let NAMEArray = data['NAME'];
+            let PWArray = data['PW'];
+
+            let nameVal = name.value;
+            let emailVal = email.value
+            let passwordVal = password.value;
+
+            if (!name || !email || !password) {
+                alert("欄位不得為空 !");
+            } else {
+                IDArray.push(data['ID'][IDArray.length - 1] + 1);
+                MAILArray.push(emailVal);
+                NAMEArray.push(nameVal);
+                PWArray.push(passwordVal);
+
+                db.ref('TABLE/USER/ID').update(IDArray);
+                db.ref('TABLE/USER/MAIL').update(MAILArray);
+                db.ref('TABLE/USER/NAME').update(NAMEArray);
+                db.ref('TABLE/USER/PW').update(PWArray);
+                db.ref('TABLE/CART').once('value', function(snapshot2) {
+                    let data2 = snapshot2.val();
+                    db.ref('TABLE/HISTORY').once('value', function(snapshot3) {
+                        let data3 = snapshot3.val();
+                        data2.push({
+                            "GID": [0],
+                            "NUM": [0]
+                        });
+                        data3.push({
+                            "GID": [0],
+                            "NUM": [0]
+                        });
+                        db.ref('TABLE/CART').update(data2);
+                        db.ref('TABLE/HISTORY').update(data3);
+                        alert('新增成功');
+                        location.href = "login.html";
+
+                    });
+
+                });
+
+                firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(emailVal, passwordVal)
+                    .then(result => {
+                        console.log(result)
+                    }).catch(function(error) {
+                        console.log(error.message)
+                    });
+
+            }
+        })
+    });
+</script>
+
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link rel="stylesheet" href="css/home.css">
+    <link rel='stylesheet' href='css/payment.css'>
+
+</head>
+
+<body>
+
+    <nav class="navbar"></nav>
+    <div id="goodCtn">
+    </div>
+
+
+    <div class="container_card_mt-3">
+        <div class="form-group_mt-3_mb-3">
+            <label class="radio">
+            <input type="radio" name='type' value='cash' id="pay-by-cash" checked='checked' > 貨到付款
+          </label>
+            <label class="radio">
+            <input type="radio" name='type' value='credit' id="pay-by-credit" > 信用卡
+          </label>
+            <label class="radio">
+            <input type="radio" name='type' value='atm' id="pay-by-atm"> 銀行轉帳
+          </label>
+        </div>
+        <div id='totalPayment'>
+            <p>商品總金額 :<b id="goodPrice">0</b></p><br>
+            <p>運費總金額 :<b id="freight">60</b></p><br>
+            <p>總付款金額 :<b id="totalPrice">60</b></p><br>
+        </div>
+        <div class="form-group">
+            <!-- <button type="button" id="card-submmit" class="btn btn-info" onclick="submit()">確認送出</button> -->
+            <p id='card-submit' class='btn btn-info' onclick='submit()'>確認送出</p>
+        </div>
+        <div id='cash-form' class="form">
+            <div class="text-center">
+                <h3>貨到付款</h3>
+            </div>
+        </div>
+
+        <div id='credit-form' style="display: none;" class="form">
+            <div class="text-center">
+                <h3>信用卡</h3>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">信用卡卡號</span>
+                </div>
+                <input type="text" class="form-control" id="card-no">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">月</span>
+                </div>
+                <input type="text" class="form-control" id="card-month" placeholder="輸入月份">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">年</span>
+                </div>
+                <input type="text" class="form-control" id="card-year" placeholder="輸入年">
+                <div class="input-group-prepend">
+                    <label class="input-group-text">末三碼</label>
+                </div>
+                <input type="text" class="form-control" id="card-csv" placeholder="輸入末三碼">
+            </div>
+            <!-- <div class="form-group">
+                <span style="color: #fc3762;" id="card-error"></span>
+            </div> -->
+        </div>
+
+        <div id='atm-form' style="display: none;">
+            <div class="text-center">
+                <h3>使用ATM轉帳</h3>
+                <p>轉帳資訊，如下</p>
+                <p>XXXXXXXXXXXX</p>
+                <p>XXXXXXXXXXXX</p>
+                <p>XXXXXXXXXXXX</p>
+            </div>
+        </div>
+        <div class="input-group-prepend">
+            <span class="input-group-text">地址</span>
+        </div>
+        <div>
+            <input type="text" class="form-control" id="address" placeholder="輸入地址">
+        </div>
+
+    </div>
+    <script>
+    </script>
+    <!-- 以下為商品 -->
+
+    <footer></footer>
+
+    <script src="js/nav.js"></script>
+    <!-- dynamic create navbar -->
+    <script src="js/footer.js"></script>
+    <!-- dynamic create footer -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+    <script src="js/card.js"></script>
+</body>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js"; import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-analytics.js"; const firebaseConfig = { apiKey: "AIzaSyAilIs8nlqbsnXLnIpK3B4zU1ojk7nQU94",
+    authDomain: "database2022-311c8.firebaseapp.com", projectId: "database2022-311c8", storageBucket: "database2022-311c8.appspot.com", messagingSenderId: "15999843002", appId: "1:15999843002:web:31a94923044c50113ee083", measurementId: "G-8HL90VJ2K7"
+    }; const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app);
+</script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script>
+    firebase.initializeApp({
+        databaseURL: "https://database2022-311c8-default-rtdb.firebaseio.com/"
+    });
+    const db = firebase.database();
+
+    function submit() {
+        if (url.searchParams.get('login') === 'true') {
+            UID = parseInt(url.searchParams.get('id'));
+            db.ref(`TABLE/CART`).once('value', function(snapshot) {
+                let data = snapshot.val();
+                let cGID = data[UID]['GID'];
+                let cNUM = data[UID]['NUM'];
+                db.ref(`TABLE/HISTORY`).once('value', function(snapshot2) {
+                    let data2 = snapshot2.val();
+                    let hGID = data2[UID]['GID'];
+                    let hNUM = data2[UID]['NUM'];
+                    db.ref(`TABLE/GOODS`).once('value', function(snapshot3) {
+                        let data3 = snapshot3.val();
+                        for (let i = 0; i < cGID.length; i++) {
+                            data3['NUM'][cGID[i]] -= cNUM[i];
+                            if (hGID.indexOf(cGID[i]) === -1) {
+                                hGID.push(cGID[i]);
+                                hNUM.push(cNUM[i]);
+                            } else {
+                                hNUM[hGID.indexOf(cGID[i])] += cNUM[i];
+                            }
+                        }
+                        data[UID] = {
+                            "GID": [0],
+                            "NUM": [0]
+                        };
+                        data2[UID]['GID'] = hGID;
+                        data2[UID]['NUM'] = hNUM;
+                        db.ref(`TABLE/CART`).update(data);
+                        db.ref(`TABLE/HISTORY`).update(data2);
+                        db.ref(`TABLE/GOODS`).update(data3);
+                        alert("已送出!");
+                        location.href = `mycart.html?login=true&id=${url.searchParams.get('id')}&name=${url.searchParams.get('name')}`;
+                    });
+                });
+            });
+        } else {
+            location.href = 'login.html';
+        }
+    }
+
+    if (url.searchParams.get('login') === 'true') {
+        UID = parseInt(url.searchParams.get('id'));
+        let goodCtn = document.getElementById('goodCtn');
+        let goodPrice = document.getElementById('goodPrice');
+        let totalPrice = document.getElementById('totalPrice');
+        db.ref(`TABLE/CART`).once('value', function(snapshot) {
+            let data = snapshot.val();
+            for (let i = 0; i < data[UID]['GID'].length; i++) {
+                db.ref(`TABLE/GOODS`).once('value', function(snapshot2) {
+                    let data2 = snapshot2.val();
+                    if (data[UID]['NUM'][i] > 0) {
+                        let index = data2['ID'].indexOf(data[UID]['GID'][i]);
+                        let name = data2['NAME'][index];
+                        let price = data2['PRICE'][index];
+                        let sid = data2['SELLER_ID'][index];
+                        let total = parseInt(goodPrice.innerText);
+                        total += data[UID]['NUM'][i] * price;
+                        goodPrice.innerText = `${total}`;
+                        totalPrice.innerText = `${total + 60}`;
+                        db.ref('TABLE/USER/NAME').once('value', function(snapshot3) {
+                            let data3 = snapshot3.val();
+                            goodCtn.innerHTML += `
+                            <div class='goodInfo'>
+                                <div id='goodName'>
+                                    <p>商品名稱</p><br><br><br><br>
+                                    <p>${name}</p>
+                                </div>
+                                <div id='price'>
+                                    <p>價格</p><br><br><br><br>
+                                    <p>${price}</p>
+                                </div>
+                                <div id='number'>
+                                    <p>數量</p><br><br><br><br>
+                                    <p>${data[UID]['NUM'][i]}</p>
+                                </div>
+                                <div id='total'>
+                                    <p>總金額</p><br><br><br><br>
+                                    <p>${data[UID]['NUM'][i] * price}</p>
+                                </div>
+                            </div>`
+                        });
+                    }
+                });
+
+            }
+        });
+    } else {
+        location.href = 'login.html';
+    }
+
+
+    let name;
+    let price;
+    let total = 0;
+
+    function back() {
+        location.href = `./index.html?login=true&id=${url.searchParams.get('id')}&name=${url.searchParams.get('name')}`;
+    }
+</script>
+
+</html>

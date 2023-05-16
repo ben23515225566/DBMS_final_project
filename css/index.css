@@ -1,0 +1,13 @@
+@import 'nav.css';
+@import 'footer.css';
+
+.content{
+    background-color: #d1d1d1;
+    width: 75%;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    line-height: 75px;
+}

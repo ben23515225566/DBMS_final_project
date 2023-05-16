@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="css/signup.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="src/dark-logo.png" class="logo" alt="">
+        <div>
+            <input type="email" autocomplete="off" id="email" placeholder="email">
+            <input type="password" autocomplete="off" id="password" placeholder="password">
+            <button class="submit-btn" id="loginBtn">log in</button>
+        </div>
+        <a href="signup.html" class="link">don't have an account? Create one</a>
+    </div>
+
+</body>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-app.js"; import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-auth.js"; import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.8.1/firebase-analytics.js";
+    const firebaseConfig = { apiKey: "AIzaSyAilIs8nlqbsnXLnIpK3B4zU1ojk7nQU94", authDomain: "database2022-311c8.firebaseapp.com", projectId: "database2022-311c8", storageBucket: "database2022-311c8.appspot.com", messagingSenderId: "15999843002", appId:
+    "1:15999843002:web:31a94923044c50113ee083", measurementId: "G-8HL90VJ2K7" }; const app = initializeApp(firebaseConfig); const analytics = getAnalytics(app); const auth=getAuth(app);
+</script>
+<script src="https://www.gstatic.com/firebasejs/4.12.1/firebase.js"></script>
+<script>
+    firebase.initializeApp({
+        databaseURL: "https://database2022-311c8-default-rtdb.firebaseio.com/"
+    });
+    const db = firebase.database();
+
+    loginBtn.addEventListener('click', (e) => {
+        e.preventDefault()
+        let email = document.getElementById("email").value;
+        let password = document.getElementById("password").value;
+        let loginBtn = document.getElementById("loginBtn");
+
+        db.ref(`TABLE/USER`).once('value', function(snapshot) {
+            if (!email || !password) {
+                alert("欄位不得為空!");
+            } else {
+                let data = snapshot.val();
+                let IDArray = data['ID']
+                let mailArray = data['MAIL'];
+                let nameArray = data['NAME'];
+                let pwArray = data['PW'];
+
+                if (mailArray.indexOf(email) === -1) {
+                    alert("不存在此帳號!");
+                } else if (pwArray.indexOf(password) === -1) {
+                    alert("密碼錯誤!");
+                } else {
+                    id = IDArray[mailArray.indexOf(email)];
+                    name = nameArray[mailArray.indexOf(email)];
+                    location.href = `index.html?login=true&id=${id}&name=${name}`;
+                }
+
+
+            }
+
+        });
+    })
+</script>
+
+</html>
